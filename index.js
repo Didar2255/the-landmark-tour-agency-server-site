@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const { MongoClient } = require('mongodb');
 require('dotenv').config()
+const ObjectId = require('mongodb').ObjectId
 const app = express()
 const port = process.env.PORT || 5000
 
@@ -43,12 +44,23 @@ async function run() {
 
         })
         // get order api
-
         app.get('/myOrders/:email', async (req, res) => {
             const userEmail = req.params.email
             const result = await ordersCollection.find({ email: userEmail }).toArray();
             res.send(result)
+        })
+        // delete order api
+        app.delete('/deleteOrders/:id', async (req, res) => {
+            const result = await ordersCollection.deleteOne({ _id: req.params.id })
+            console.log(result)
+            // res.send(result)
+        })
+        // manage all order
 
+        app.get('/manageOrder', async (req, res) => {
+            const manageOrder = ordersCollection.find({})
+            const result = await manageOrder.toArray()
+            res.send(result)
         })
 
     }
