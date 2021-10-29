@@ -19,20 +19,36 @@ async function run() {
         await client.connect()
         const database = client.db("LandmarkTourDb")
         const toursCollection = database.collection('tours')
+        const ordersCollection = database.collection('orders')
 
         // get api
         app.get('/services', async (req, res) => {
             const service = toursCollection.find({})
             const result = await service.toArray()
-            console.log(result)
             res.send(result)
         })
         // post api
         app.post('/addServices', async (req, res) => {
             const services = req.body
             const result = await toursCollection.insertOne(services)
+            res.json(result)
+        })
+        // add products
+
+        app.post('/addOrder', async (req, res) => {
+            const order = req.body
+            const result = await ordersCollection.insertOne(order)
             console.log(result)
             res.json(result)
+
+        })
+        // get order api
+
+        app.get('/myOrders/:email', async (req, res) => {
+            const userEmail = req.params.email
+            const result = await ordersCollection.find({ email: userEmail }).toArray();
+            res.send(result)
+
         })
 
     }
