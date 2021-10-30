@@ -27,40 +27,55 @@ async function run() {
             const service = toursCollection.find({})
             const result = await service.toArray()
             res.send(result)
-        })
+        });
         // post api
         app.post('/addServices', async (req, res) => {
             const services = req.body
             const result = await toursCollection.insertOne(services)
             res.json(result)
-        })
+        });
         // add products
 
         app.post('/addOrder', async (req, res) => {
             const order = req.body
             const result = await ordersCollection.insertOne(order)
-            console.log(result)
             res.json(result)
 
-        })
+        });
         // get order api
         app.get('/myOrders/:email', async (req, res) => {
             const userEmail = req.params.email
             const result = await ordersCollection.find({ email: userEmail }).toArray();
             res.send(result)
-        })
+        });
         // delete order api
         app.delete('/deleteOrders/:id', async (req, res) => {
             const result = await ordersCollection.deleteOne({ _id: (req.params.id) })
-            // console.log(result)
             res.send(result)
-        })
+        });
         // manage all order
-
         app.get('/manageOrder', async (req, res) => {
             const manageOrder = ordersCollection.find({})
             const result = await manageOrder.toArray()
             res.send(result)
+        });
+        //  get status api
+        app.get('/updateStatus/:id', async (req, res) => {
+            const id = req.params.id
+            const result = await ordersCollection.findOne({ _id: id });
+            res.send(result)
+        });
+        // update status api
+
+        app.put('/updateStatus/:id', async (req, res) => {
+            const id = req.params.id;
+            const newStatus = req.body
+            const filter = { _id: id }
+            const updateOrder = { $set: { status: newStatus.status } }
+            const result = await ordersCollection.updateOne(filter, updateOrder)
+            console.log(result)
+            res.json(result)
+
         })
 
     }
